@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    
+    <link rel="stylesheet" href="dmdoc.css" />
+    <title>modular_skyraptor&#x2F;readme.md - &#x2F;tg&#x2F; Station 13</title>
+</head>
+<body>
+<header>
+    <a href="index.html">&#x2F;tg&#x2F; Station 13</a> -
+    <a href="index.html#modules">Modules</a> -
+    <a href="index.html#types">Types</a>
+</header>
+<main>
+<h1>The modularization handbook - Skyraptor Style, V0.1 <aside>modular_skyraptor/readme.md</aside> 
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/readme.md">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;readme.md"/></a></h1>
+
+<table class="summary" cellspacing="0">
+        <tr><td colspan="2"><hh2 id="failure-to-follow-this-guide-will-probably-get-your-pr-denied">Failure to follow this guide will probably get your PR denied.</hh2><hh2 id="introduction">Introduction</hh2>
+<p>Developing &amp; maintaining a codebase touched by a thousand hands as hand #1001 is a nightmarish task.  Doing so when you're also expecting to be working alongside hands #1002, #1003, etc, <em>and</em> trying to keep everything from exploding if you ever have to update?  Beyond nightmarish.  To that end, Skyraptor follows the same modularization principles as Skyrat, Daedalus Dock, and many others; base the server on a solid codebase maintained by <em>other developers</em> - in this case, tgstation - and either insert or change as much as possible in a strictly modular fashion whilst following the coding principles of our upstream &amp; mirroring changes as needed for parity.</p>
+<p>The rationale behind this is simple - Git is a powerful tool, but just like any other program, it has no comprehension of the intent behind changes or conflicts &amp; so the job of resolving them falls to the developers at merge-time.  The less of tgstation's original code we change, the fewer conflicts arise - and the more time we can dedicate to our own features.  To that end, we <em>modularize</em> our content and changes by taking advantage of DM's unique format - more on this below.  All-new content can simply be added in a module (e.g, modular_skyraptor/modules/cool_new_hats) without ever touching any original TG code - and where possible, changes can be made by hooking into the original code and overriding it rather than overwriting the actual TG files and creating potential merge conflicts down the line.</p>
+<p>This document is meant to be updated and changed, whenever any new exceptions are added onto it. It might be worth it to check, from time to time, whether we didn't define a more unique standardized way of handling some common change.</p>
+<hh2 id="important-test-your-prs">Important - TEST YOUR PRS!!</hh2>
+<p>You are responsible for thorough testing of the changes you make.  This means run a local server (see the <a href=".github/guides/RUNNING_A_SERVER.md">guide</a> here), test all the features or changes you made, and make a <em>good-faith effort</em> to test anything that could potentially be impacted.  SS13 is deeply interconnected &amp; even minute changes can end up having dramatic ripple-effects; be vigilant!</p>
+<hh2 id="what-are-merge-conflicts-and-how-do-we-solve-them">What are merge conflicts, and how do we solve them?</hh2>
+<p>Merge conflicts arise when changes need to be made in code sourced from upstream (tgstation) - as an example, we have a toy object that prints two numbers when used in-hand, incrementing one of them after it's done.</p>
+<pre><code class="language-byond">/obj/item/number_toy
+	name = &quot;number toy&quot;
+	desc = &quot;It prints funny numbers for the whole world to see!&quot;
+	var/something = 6
+
+/obj/item/number_toy/attack_self(mob/user)
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)
+	something = something + 1
+</code></pre>
+<p>If we want to change the value of the numbers printed, we have to change the contents of its variables.  The easy way to do it - and the way you would if you were making this PR upstream - is to simply...change the variables, as below.</p>
+<pre><code class="language-diff">- var/something = 6		//ORIGINAL VALUE
++ var/something = 1336	//OUR EDIT
+</code></pre>
+<p>But then, what if upstream decides they'd like to make it into a meme, too?  They change it to 1337.</p>
+<pre><code class="language-diff">- var/something = 6
++ var/something = 1337
+</code></pre>
+<p>This presents a conflict for Git when it tries to merge the latest from upstream - which value does it choose?</p>
+<pre><code class="language-diff">- var/something = 6
++ var/something = 1336	//OUR EDIT
++ var/something = 1337	//UPSTREAM VALUE
+</code></pre>
+<p>In this case, it's an easy fix - we can just choose the value we wanted by hand.</p>
+<pre><code class="language-byond">var/something = 1336	//SKYRAPTOR EDIT
+</code></pre>
+<hh3 id="basic-modularization-overrides-for-dummies">Basic Modularization: Overrides for Dummies</hh3>
+<p>For changes like this, we can easily <em>override</em> the original values from a new file, allowing us to make a pretty wide number of changes without ever having to modfiy the original code - and as such, without ever having to worry about merge conflicts.</p>
+<p>Say we wanted to, once again, change the number toy's output value - but this time, in a modular fashion.  In a new file, e.g <code>modular_skyraptor/modules/number_toy_rework/newnumbers.dm</code>, we can make changes and additions to the number_toy item just as if we were writing them in the original file.</p>
+<pre><code class="language-byond">/obj/item/number_toy
+	var/something = 1336
+</code></pre>
+<p>With just those two lines, the number toy will now always have an initial SOMETHING value of 1336 - no matter if upstream changes it to 7, 1337, 0, 64, or any other number - and all without ever causing merge conflicts, as it's in an entirely different file from upstream.  In much the same fashion, we could also give it a new name &amp; description:</p>
+<pre><code class="language-byond">/obj/item/number_toy
+	name = &quot;elite number toy&quot;
+	desc = &quot;It starts at the funny number now!&quot;
+	var/something = 1336
+</code></pre>
+<p>And we can even add whole new variables, too:</p>
+<pre><code class="language-byond">/obj/item/number_toy
+	name = &quot;elite number toy&quot;
+	desc = &quot;It starts at the funny number now!&quot;
+	var/something = 1336
+	var/something2 = 1330
+</code></pre>
+<hh3 id="proc-additions-for-dummies">Proc Additions: . = ..() for Dummies</hh3>
+<p>BYOND's DM language is object-oriented, much like many modern languages, and features a robust system for extending, altering, and overriding functions - which we can use to our advantage via this little magic snippet:</p>
+<pre><code class="language-byond">. = ..()
+</code></pre>
+<p>In a nutshell - this snippet lets you run &amp; continue from the parent function, at any point within your own code.  If you want to modify values before running the parent function, you'd put it after your code - or vice-versa, if you want to continue on after the end of the parent function, all whilst retaining the return value <code>.</code> of the parent function.  To demonstrate this visually, let's look at the original interaction function of the number toy:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)
+	something = something + 1
+</code></pre>
+<p>Let's say we want to increment its <code>something</code> a second time, for a total of +2 per use instead of +1.  Where we position the <code>. = ..()</code> is important to determine the end-result behaviour!  For instance, if we put our code <em>before</em> it...</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	something = something + 1
+	. = ..()
+</code></pre>
+<p>It's equivalent to the following code:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	something = something + 1	//This increments BEFORE printing, meaning the starting value of Something is never seen by the end user!
+	//. = ..() expands to the full parent function, here:
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)
+	something = something + 1
+</code></pre>
+<p>So if we want the arguably more &quot;expected&quot; result of a +2 increment <em>after</em> printing, we need to run the parent function and <em>then</em> increment:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	. = ..()
+	something = something + 1
+</code></pre>
+<p>This expands out to the following code:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	//. = ..() expands to the full parent function, here:
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)
+	something = something + 1
+	//beginning of our modular code
+	something = something + 1	//This increments AFTER printing, meaning that the expected +2 increment is displayed!
+</code></pre>
+<p>We can even use new variables added via modular changes, like Something2 from above:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	. = ..()
+	something = something + 1
+	to_chat(world, &quot;Something2 exists now, too!  Here it is: [something2]!&quot;)
+</code></pre>
+<hh3 id="non-modular-changes-oh-no">Non-Modular Changes, Oh No!</hh3>
+<p>Sometimes changes emerge that are hard, if not downright impossible to properly modularize - in these scenarios, we have to <em>document thoroughly</em> and be as sparing as possible with the changes being made.  Continuing with the number toy example - it's always printed the number 60 from the variable local_something.  What if we want to change that?  We could try to use the same technique as the double-increment...</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	. = ..()
+	local_something = 1337
+</code></pre>
+<p>But this won't work!  By changing it <em>after</em> the function runs &amp; finishes printing, there's no discernible effect!  What if we move it to happen before?</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	local_something = 1337
+	. = ..()
+</code></pre>
+<p>This code will fail to compile because <code>local_something</code> doesn't exist yet!  And if we define it properly...</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	var/local_something = 1337
+	. = ..()
+</code></pre>
+<p>This <em>still</em> won't work - as even if it compiles correctly, the original code sets <code>local_something</code> to 60 <em>after</em> our code sets it to 1337, meaning it might as well have never run!  In scenarios like this, you'll have to make changes to the <em>base code</em>, and so it's important to <em>label your changes clearly</em> - otherwise you're creating headaches down the line for when a merge conflict inevitably emerges.  So instead of silently altering the value of local_something, you <em>label it clearly</em>, like so:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	var/local_something = 1337 //SKYRAPTOR EDIT: 1337, up from 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)
+	something = something + 1
+</code></pre>
+<p>If your edits need to take up multiple lines, it's best to keep the <em>original version commented out</em> with a notice, like so:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	//SKYRAPTOR CHANGE BEGIN - ORIGINAL
+	/*var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)*/
+	//SKYRAPTOR CHANGE BEGIN - NEW CODE
+	var/local_something = 1337
+	to_chat(world, &quot;WOOO LOCAL_SOMETHING IS: [local_something]!!1!&quot;)
+	//SKYRAPTOR CHANGE END
+	something = something + 1
+</code></pre>
+<p>Or if you want to completely remove the use of local_something, comment it out with <em>removal notices</em>:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	//SKYRAPTOR REMOVAL BEGIN
+	/*var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)*/
+	//SKYRAPTOR REMOVAL END
+	something = something + 1
+</code></pre>
+<p>Similarly, anything you want to <em>add</em> should be surrounded with <em>addition notices</em>:</p>
+<pre><code class="language-byond">/obj/item/number_toy/attack_self(mob/user)
+	to_chat(world, &quot;THE NUMBER TOY HAS BEEN ACTIVATED.  Its SOMETHING is [something]!&quot;)
+	var/local_something = 60
+	to_chat(world, &quot;THE NUMBER TOY IS DONE ACTIVATING.  Its LOCAL_SOMETHING is [local_something]!&quot;)
+	//SKYRAPTOR ADDITION BEGIN
+	local_something = local_something + 1
+	to_chat(world, &quot;THE NUMBER TOY IS FULLY DONE ACTIVATING.  Its LOCAL_SOMETHING is now [local_something]!&quot;)
+	//SKYRAPTOR ADDITION END
+	something = something + 1
+</code></pre>
+<p>Finally, if your reworks are <em>part of a module</em>, make sure to <em>label them as such</em> by including your Module ID - more on that below.  Similarly, if you're moving code <em>into</em> a modular file for easier edits, make sure to <em>label which file it's being moved to</em> in your notices!</p>
+<hh2 id="modularization-protocol">Modularization Protocol</hh2>
+<p>Start out by considering the theme &amp; area of your module - make sure there isn't one already made to suit that purpose!  For instance, if you're planning on reworking everyday sprites like <em>walls</em>, <em>airlocks</em>, or <em>tools</em>, consider the AESTHETICS module (<code>modular_skyraptor/modules/aesthetics</code>) instead of making a new one!  If you're planning a bugfix to the <em>underlying tgcode</em>, please try to <strong>PR it upstream first</strong> so we can mirror it; not only does it make every server that uses TG as a base better, but it means if someone else fixes the bug on TG down the line, we won't have merge conflicts.</p>
+<p>If you can't find a module that fits your work, and it's not going to just be a flat-out TG bugfix, pick a new ID for your module, such as <code>CORPORATE_HAT_REWORK</code> or <code>MAGIC_SPAWN_BUTTON</code> - simple and informative is best!  This ID is meant to be used for documentation &amp; clarity, so it's important that its use be <em>uniform throughout the entire module</em> for ease of search.  Once you've got an ID picked, make a core folder to work from, named after your module ID; for instance, <code>modular_skyraptor/modules/cool_new_hats</code>, alongside subfolders for <code>code</code>, <code>icons</code>, <code>sound</code>, etc.</p>
+<hh3 id="assets-images-sounds-icons-and-binaries">Assets: images, sounds, icons and binaries</hh3>
+<p>Git does <em><strong>NOT</strong></em> like handling conflicts of binary files, like <em>images</em> and <em>sounds</em>.  For this reason, absolutely <strong>do not</strong> mess around with tgcode binary stuff unless you have a really, <em>really</em>, <em><strong>really</strong></em> good reason to do so.  If you need new assets, put them into the appropriate subfolder of your module - e.g, <code>modular_skyraptor/modules/cool_new_hats/icons/homestar_hat.dmi</code> or <code>modular_skyraptor/modules/cool_new_hats/sounds/hat_spin.ogg</code>.  If you still really need to change assets <em>used in basecode</em> &amp; can't just include overrides in AESTHETICS or similar, that is the purpose of the <code>master_files</code> directory - this is where modified versions of base-TG DMIs and sounds should go, alongside the code files dictating their overrides - info below courtesy of Skyrat's documentation.</p>
+<hh4 id="the-folder">The <code>master_files</code> Folder</hh4>
+<p>You should always put any modular overrides of icons, sound, code, etc. inside this folder, and it <strong>must</strong> follow the core code folder layout.</p>
+<p>Example: <code>code/modules/mob/living/living.dm</code> -&gt; <code>modular_skyraptor/master_files/code/modules/mob/living/living.dm</code></p>
+<p>This is to make it easier to figure out what changed about a base file without having to search through proc definitions. </p>
+<p>It also helps prevent modules needlessly overriding the same proc multiple times. More information on these types of edits come later.</p>
+<hh3 id="fully-modular-additions">Fully modular additions</hh3>
+<p>Wherever possible, all modular code you make for your modules should go in <strong><code>modular_skyraptor/modules/yourmodule/code/</code></strong> and any necessary subfolders for organization.</p>
+<p>All modules, unless <em>very</em> simple, <strong>need</strong> to have a <code>readme.md</code> in their folder, containing the following:</p>
+<ul>
+<li>links to the PRs that implemented this module or made any significant changes to it</li>
+<li>a short description of the module</li>
+<li>list of files changed in the core code, with a short description of the change, and a list of changes in other modular files that are not part of the same module, that were necessary for this module to function properly</li>
+<li>(optionally) a bit more elaborative documentation for future-proofing the code,  that will be useful further development and maintenance</li>
+<li>credits</li>
+</ul>
+<p><em><strong>Template:</strong></em> <a href="module_template.md">Here</a></p>
+<hh2 id="defines">Defines</hh2>
+<p>Due to the order in which BYOND loads files, any defines your modules add need to go into a unique subfolder - <strong><code>code/__DEFINES/~skyraptor_defines</code></strong> - and under a DM file matching the ID of your module (e.g, <code>code/__DEFINES/~skyraptor_defines/corporate_hat_rework.dm</code>)</p>
+<p>If you have a define that's used in more than one file, <strong>put it in there</strong>, while any defines used only within a single file should be declared at the top of their DM, and <strong>undefined</strong> at the end with <code>#undef MY_DEFINE</code> at the bottom to avoid bloat in context menus or IDEs.</p>
+<hh2 id="afterword">Afterword</hh2>
+<p>This has been quite the wall of text, to be sure, but it is for the better - the cleaner we can write our code, the easier it is to maintain the server &amp; keep everything moving.  Massive thanks to the contribs who wrote up Skyrat's modularization guide - much of their design philosophy is still present here.</p></td></tr></table></main>
+<footer>
+    tgstation.dme
+    <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/tree/911566a3e11c581d64ea11425da5b11fd5257b51">911566a</a>
+        (master) &mdash; <a href="https://github.com/SpaceManiac/SpacemanDMM/blob/master/crates/dmdoc/README.md">dmdoc 1.7.3</a></footer>
+</body>
+</html>

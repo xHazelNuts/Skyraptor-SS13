@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <base href="../../" />
+    <link rel="stylesheet" href="dmdoc.css" />
+    <title>&#x2F;obj&#x2F;item&#x2F;reagent_containers - &#x2F;tg&#x2F; Station 13</title>
+</head>
+<body>
+<header>
+    <a href="index.html">&#x2F;tg&#x2F; Station 13</a> -
+    <a href="index.html#modules">Modules</a> -
+    <a href="index.html#types">Types</a>
+ &mdash; <a href="obj/item/reagent_containers.html#var">Var Details</a> - <a href="obj/item/reagent_containers.html#proc">Proc Details</a></header>
+<main>
+<h1>reagent_containers <aside>/<a href="obj.html">obj</a>/<a href="obj/item.html">item</a>/<a href="obj/item/reagent_containers.html">reagent_containers</a></aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L1">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 1"/></a></h1>
+
+<p>SKYRAPTOR AESTHETICS MODULE: SHIPTEST CHEMISTRY
+Reworks sprites to Shiptest style, and adds caps to beakers and bottles.
+CAP CODE GOES HERE</p><table class="summary" cellspacing="0"><tr><td colspan="2"><h2>Vars</h2></td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/amount_list_position">amount_list_position</a></th><td>Where we are in the possible transfer amount list. Number should match the position in possible_transfer_amounts corresponding to amount_per_transfer_from_this.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/amount_per_transfer_from_this">amount_per_transfer_from_this</a></th><td>The maximum amount of reagents per transfer that will be moved out of this reagent container. This value's position in possible_transfer_amounts should be reflected in amount_list_position.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/can_have_cap">can_have_cap</a></th><td>To enable caps, set can_have_cap to TRUE and define a cap_icon_state. Do not change at runtime.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/cap_on">cap_on</a></th><td>Whether the container has a cap on. Do not set directly at runtime; use set_cap_status().</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/disease_amount">disease_amount</a></th><td>How much of a disease specified in spawned_disease should this container spawn with</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/fill_icon">fill_icon</a></th><td>The icon file to take fill icon appearances from</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/fill_icon_state">fill_icon_state</a></th><td>The optional custom name for the reagent fill icon_state prefix
+If not set, uses the current icon state.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/fill_icon_thresholds">fill_icon_thresholds</a></th><td>The different thresholds at which the reagent fill overlay will change. See reagentfillings.dmi.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/list_reagents">list_reagents</a></th><td>A list of what initial reagents this container should spawn with</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/possible_transfer_amounts">possible_transfer_amounts</a></th><td>The different possible amounts of reagent to transfer out of the container</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/reagent_flags">reagent_flags</a></th><td>Reagent flags, a few examples being if the container is open or not, if its transparent, if you can inject stuff in and out of the container, and so on</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/spawned_disease">spawned_disease</a></th><td>If this container should spawn with a disease type inside of it</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/spillable">spillable</a></th><td>If the reagents inside of this container will splash out when the container tries to splash onto someone or something</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#var/volume">volume</a></th><td>The maximum amount of reagents this container can hold</td></tr><tr><td colspan="2"><h2>Procs</h2></td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/AltClick">AltClick</a></th><td>Adds alt-clicking to take the cap on or off</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/Initialize">Initialize</a></th><td>Adds code to initialization for the caps</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/examine">examine</a></th><td>Adds examine notes for the cap</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/is_injectable">is_injectable</a></th><td>Stops injectability, drawability, refilling, draining, and so on</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/on_reagent_change">on_reagent_change</a></th><td>Updates the icon of the container when the reagents change. Eats signal args</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/set_cap_status">set_cap_status</a></th><td>Adds the container's cap if TRUE is passed in, and removes it if FALSE is passed in. Container must be able to accept a cap.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/try_splash">try_splash</a></th><td>Tries to splash the target. Used on both right-click and normal click when in combat mode.</td></tr>
+            <tr><th><a href="obj/item/reagent_containers.html#proc/update_overlays">update_overlays</a></th><td>Adds cap overlay</td></tr></table>
+    <h2 id="var">Var Details</h2><h3 id="var/amount_list_position"><aside class="declaration">var </aside>amount_list_position
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L12">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 12"/></a></h3>
+        <p>Where we are in the possible transfer amount list. Number should match the position in possible_transfer_amounts corresponding to amount_per_transfer_from_this.</p><h3 id="var/amount_per_transfer_from_this"><aside class="declaration">var </aside>amount_per_transfer_from_this
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L8">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 8"/></a></h3>
+        <p>The maximum amount of reagents per transfer that will be moved out of this reagent container. This value's position in possible_transfer_amounts should be reflected in amount_list_position.</p><h3 id="var/can_have_cap"><aside class="declaration">var </aside>can_have_cap
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L7">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 7"/></a></h3>
+        <p>To enable caps, set can_have_cap to TRUE and define a cap_icon_state. Do not change at runtime.</p><h3 id="var/cap_on"><aside class="declaration">var </aside>cap_on
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L10">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 10"/></a></h3>
+        <p>Whether the container has a cap on. Do not set directly at runtime; use set_cap_status().</p><h3 id="var/disease_amount"><aside class="declaration">var </aside>disease_amount
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L22">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 22"/></a></h3>
+        <p>How much of a disease specified in spawned_disease should this container spawn with</p><h3 id="var/fill_icon"><aside class="declaration">var </aside>fill_icon
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L39">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 39"/></a></h3>
+        <p>The icon file to take fill icon appearances from</p><h3 id="var/fill_icon_state"><aside class="declaration">var </aside>fill_icon_state
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L37">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 37"/></a></h3>
+        <p>The optional custom name for the reagent fill icon_state prefix
+If not set, uses the current icon state.</p><h3 id="var/fill_icon_thresholds"><aside class="declaration">var </aside>fill_icon_thresholds
+            <aside>&ndash; /list</aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L34">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 34"/></a></h3>
+        <p>The different thresholds at which the reagent fill overlay will change. See reagentfillings.dmi.</p>
+<p>Should be a list of integers which correspond to a reagent unit threshold.
+If null, no automatic fill overlays are generated.</p>
+<p>For example, list(0) will mean it will gain a the overlay with any reagents present. This overlay is &quot;overlayname0&quot;.
+list(0, 10) whill have two overlay options, for 0-10 units (&quot;overlayname0&quot;) and 10+ units (&quot;overlayname10&quot;).</p><h3 id="var/list_reagents"><aside class="declaration">var </aside>list_reagents
+            <aside>&ndash; /list</aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L18">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 18"/></a></h3>
+        <p>A list of what initial reagents this container should spawn with</p><h3 id="var/possible_transfer_amounts"><aside class="declaration">var </aside>possible_transfer_amounts
+            <aside>&ndash; /list</aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L10">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 10"/></a></h3>
+        <p>The different possible amounts of reagent to transfer out of the container</p><h3 id="var/reagent_flags"><aside class="declaration">var </aside>reagent_flags
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L16">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 16"/></a></h3>
+        <p>Reagent flags, a few examples being if the container is open or not, if its transparent, if you can inject stuff in and out of the container, and so on</p><h3 id="var/spawned_disease"><aside class="declaration">var </aside>spawned_disease
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L20">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 20"/></a></h3>
+        <p>If this container should spawn with a disease type inside of it</p><h3 id="var/spillable"><aside class="declaration">var </aside>spillable
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L24">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 24"/></a></h3>
+        <p>If the reagents inside of this container will splash out when the container tries to splash onto someone or something</p><h3 id="var/volume"><aside class="declaration">var </aside>volume
+            <aside>&ndash; </aside>
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L14">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 14"/></a></h3>
+        <p>The maximum amount of reagents this container can hold</p><h2 id="proc">Proc Details</h2><h3 id="proc/AltClick">AltClick<aside>(/<a href="mob.html">mob</a>/user) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L67">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 67"/></a></aside>
+        </h3>
+        <p>Adds alt-clicking to take the cap on or off</p><h3 id="proc/Initialize"><aside class="parent"><a title="/atom" href="atom.html#proc/Initialize">&uarr;</a></aside>Initialize<aside>(mapload, vol) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L14">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 14"/></a></aside>
+        </h3>
+        <p>Adds code to initialization for the caps</p><h3 id="proc/examine"><aside class="parent"><a title="/atom" href="atom.html#proc/examine">&uarr;</a></aside>examine<aside>(/<a href="mob.html">mob</a>/user) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L38">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 38"/></a></aside>
+        </h3>
+        <p>Adds examine notes for the cap</p><h3 id="proc/is_injectable"><aside class="parent"><a title="/atom" href="atom.html#proc/is_injectable">&uarr;</a></aside>is_injectable<aside>(/<a href="mob.html">mob</a>/user, allowmobs) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L49">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 49"/></a></aside>
+        </h3>
+        <p>Stops injectability, drawability, refilling, draining, and so on</p><h3 id="proc/on_reagent_change"><aside class="declaration">proc </aside>on_reagent_change<aside>(/<a href="datum.html">datum</a>/<a href="datum/reagents.html">reagents</a>/holder, ...) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L255">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 255"/></a></aside>
+        </h3>
+        <p>Updates the icon of the container when the reagents change. Eats signal args</p><h3 id="proc/set_cap_status"><aside class="declaration">proc </aside>set_cap_status<aside>(value_to_set) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L26">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 26"/></a></aside>
+        </h3>
+        <p>Adds the container's cap if TRUE is passed in, and removes it if FALSE is passed in. Container must be able to accept a cap.</p><h3 id="proc/try_splash"><aside class="declaration">proc </aside>try_splash<aside>(/<a href="mob.html">mob</a>/user, /<a href="atom.html">atom</a>/target) 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/code/modules/reagents/reagent_containers.dm#L114">
+        <img src="git.png" width="16" height="16" title="code&#x2F;modules&#x2F;reagents&#x2F;reagent_containers.dm 114"/></a></aside>
+        </h3>
+        <p>Tries to splash the target. Used on both right-click and normal click when in combat mode.</p><h3 id="proc/update_overlays"><aside class="parent"><a title="/atom/movable" href="atom/movable.html#proc/update_overlays">&uarr;</a></aside>update_overlays<aside>() 
+        
+    
+            <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/blob/911566a3e11c581d64ea11425da5b11fd5257b51/modular_skyraptor/modules/aesthetics/shiptest_chemcontainers/shipchems.dm#L79">
+        <img src="git.png" width="16" height="16" title="modular_skyraptor&#x2F;modules&#x2F;aesthetics&#x2F;shiptest_chemcontainers&#x2F;shipchems.dm 79"/></a></aside>
+        </h3>
+        <p>Adds cap overlay</p></main>
+<footer>
+    tgstation.dme
+    <a href="https://github.com/Bird-Lounge/Skyraptor-SS13/tree/911566a3e11c581d64ea11425da5b11fd5257b51">911566a</a>
+        (master) &mdash; <a href="https://github.com/SpaceManiac/SpacemanDMM/blob/master/crates/dmdoc/README.md">dmdoc 1.7.3</a></footer>
+</body>
+</html>
